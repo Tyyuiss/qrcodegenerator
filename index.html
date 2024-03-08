@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>   
+    <link href="icon.png" rel="icon" />
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #61dafb;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #61dafb;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #61dafb;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #333;
+            background-color: #fff;
+            resize: none; /* Disable resizing */
+        }
+
+        button {
+            background-color: #61dafb;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #qrcode {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #downloadBtn {
+            background-color: #61dafb;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #downloadBtn:hover {
+            background-color: #45a049;
+        }
+
+        .wifi-fields {
+            display: none;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>QR Code Generator</h1>
+    <center><h2>Open the QR-Code in a new tab to download it.</h2></center>
+
+    <form id="qrForm">
+        <label for="contentType">Content Type:</label>
+        <select id="contentType" name="contentType" onchange="toggleFields()">
+            <option value="TEXT">Text/URL</option>
+            <option value="WIFI">Wi-Fi</option>
+        </select>
+
+        <div class="wifi-fields">
+            <label for="wifiName">Wi-Fi Name:</label>
+            <input type="text" id="wifiName" name="wifiName" placeholder="Wi-Fi Name">
+
+            <label for="wifiPassword">Wi-Fi Password:</label>
+            <input type="password" id="wifiPassword" name="wifiPassword" placeholder="Wi-Fi Password">
+
+            <label for="wifiAuthType">Wi-Fi Authentication Type:</label>
+            <select id="wifiAuthType" name="wifiAuthType">
+                <option value="WPA">WPA</option>
+                <option value="WEP">WEP</option>
+                <option value="None">None</option>
+            </select>
+        </div>
+
+        <label for="content" id="contentLabel">Content:</label>
+        <textarea id="content" name="content" rows="4" placeholder="Enter text or URL"></textarea>
+
+        <button type="button" onclick="generateQRCode()">Generate QR Code</button>
+
+        <div id="qrcode"></div>
+
+    </form>
+</div>
+
+<div style="position: fixed; bottom: 10px; left: 10px; color: #61dafb; font-size: 14px;">
+    Made by Ethan Peters
+</div>
+
+<script>
+    function toggleFields() {
+        var contentType = document.getElementById('contentType').value;
+        var wifiFields = document.querySelector('.wifi-fields');
+        var contentLabel = document.getElementById('contentLabel');
+        var contentTextarea = document.getElementById('content');
+
+        if (contentType === 'WIFI') {
+            wifiFields.style.display = 'block';
+            contentLabel.style.display = 'none';
+            contentTextarea.style.display = 'none';
+        } else {
+            wifiFields.style.display = 'none';
+            contentLabel.style.display = 'block';
+            contentTextarea.style.display = 'block';
+        }
+    }
+
+    function generateQRCode() {
+        var contentType = document.getElementById('contentType').value;
+        var content = '';
+        var wifiName = document.getElementById('wifiName').value;
+        var wifiPassword = document.getElementById('wifiPassword').value;
+        var wifiAuthType = document.getElementById('wifiAuthType').value;
+
+        if (contentType === 'WIFI') {
+            var wifiConfig = `WIFI:T:${wifiAuthType};S:${wifiName};P:${wifiPassword};;`;
+            content = wifiConfig;
+        } else {
+            content = document.getElementById('content').value;
+        }
+
+        document.getElementById('qrcode').innerHTML = '';
+        var qrcode = new QRCode(document.getElementById('qrcode'), content);
+
+        window.qrcodeInstance = qrcode;
+    }
+</script>
+
+</body>
+</html>
